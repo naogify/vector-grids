@@ -1,7 +1,7 @@
 const map = new window.geolonia.Map("#map");
 
 const refresh = () => {
-  const zoom = Math.floor(map.getZoom());
+  const zoom = Math.floor(map.getZoom()) + 2;
   const bounds = map.getBounds();
   let { lng: lng1, lat: lat1 } = bounds.getNorthWest();
   let { lng: lng2, lat: lat2 } = bounds.getSouthEast();
@@ -26,22 +26,21 @@ const refresh = () => {
   for (let x = min_x; x < max_x + 1; x++) {
     for (let y = min_y; y < max_y + 1; y++) {
       const geometry = tilebelt.tileToGeoJSON([x, y, zoom]);
-      let l1 = turf.distance(
-        geometry.coordinates[0][0],
-        geometry.coordinates[0][1]
-      );
-      let l2 = turf.distance(
-        geometry.coordinates[0][1],
-        geometry.coordinates[0][2]
-      );
+      const points = geometry.coordinates[0];
+      let l1 = turf.distance(points[0], points[1]);
+      let l2 = turf.distance(points[1], points[2]);
       let unit = "km";
       if (l1 > 1 && l2 > 1) {
         l1 = (Math.round(l1 * 100) / 100).toString();
         l2 = (Math.round(l2 * 100) / 100).toString();
-      } else {
+      } else if (l1 > 0.01 && l2 > 0.01) {
         l1 = Math.round(1000 * l1).toString();
         l2 = Math.round(1000 * l2).toString();
         unit = "m";
+      } else {
+        l1 = (Math.round(10000000 * l1) / 100).toString();
+        l2 = (Math.round(10000000 * l2) / 100).toString();
+        unit = "cm";
       }
       geojson.features.push({
         type: "Feature",
@@ -52,8 +51,7 @@ const refresh = () => {
   }
   try {
     map.removeLayer("grids-line");
-    map.removeLayer("grids-symbol-xyz");
-    map.removeLayer("grids-symbol-length");
+    map.removeLayer("grids-symbol");
     map.removeSource("grids");
   } catch (error) {
     // nothing
@@ -67,33 +65,22 @@ const refresh = () => {
     source: "grids",
     type: "line",
     paint: {
-      "line-width": 2,
+      "line-width": 1,
     },
   });
   map.addLayer({
-    id: "grids-symbol-xyz",
+    id: "grids-symbol",
     source: "grids",
     type: "symbol",
     layout: {
       "text-field": [
         "concat",
         ["get", "z"],
-        "/",
+        " / ",
         ["get", "x"],
-        "/",
+        " / ",
         ["get", "y"],
-      ],
-      "text-size": 16,
-      "text-font": ["Noto Sans Regular"],
-    },
-  });
-  map.addLayer({
-    id: "grids-symbol-length",
-    source: "grids",
-    type: "symbol",
-    layout: {
-      "text-field": [
-        "concat",
+        " (",
         ["get", "l1"],
         " ",
         ["get", "unit"],
@@ -101,12 +88,13 @@ const refresh = () => {
         ["get", "l2"],
         " ",
         ["get", "unit"],
+        ")",
       ],
-      "text-size": 16,
-      "text-offset": [0, 3],
+      "text-size": 10,
       "text-font": ["Noto Sans Regular"],
     },
   });
+
   return zoom;
 };
 
@@ -114,7 +102,7 @@ map.on("load", () => {
   let prevZoom = refresh();
 
   map.on("zoom", (e) => {
-    const zoom = Math.floor(map.getZoom());
+    const zoom = Math.floor(map.getZoom()) + 2;
     if (zoom !== prevZoom) {
       prevZoom = refresh();
     }
