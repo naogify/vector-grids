@@ -296,7 +296,7 @@ function pointToTileFraction(lon, lat, z) {
   return [x, y, z];
 }
 
-window.tilebelt = {
+const tilebelt = {
   tileToGeoJSON: tileToGeoJSON,
   tileToBBOX: tileToBBOX,
   getChildren: getChildren,
@@ -311,3 +311,5 @@ window.tilebelt = {
   bboxToTile: bboxToTile,
   pointToTileFraction: pointToTileFraction,
 };
+
+window.tilebelt = tilebelt;

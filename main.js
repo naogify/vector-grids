@@ -29,22 +29,47 @@ const refresh = () => {
       const points = geometry.coordinates[0];
       let l1 = turf.distance(points[0], points[1]);
       let l2 = turf.distance(points[1], points[2]);
+      let l3 = turf.distance(points[2], points[3]);
+      let l4 = turf.distance(points[3], points[4]);
+      let km_l1 = l1;
+      let km_l2 = l2;
+      let km_l3 = l3;
+      let km_l4 = l4;
       let unit = "km";
       if (l1 > 1 && l2 > 1) {
         l1 = (Math.round(l1 * 100) / 100).toString();
         l2 = (Math.round(l2 * 100) / 100).toString();
+        l3 = (Math.round(l3 * 100) / 100).toString();
+        l4 = (Math.round(l4 * 100) / 100).toString();
       } else if (l1 > 0.01 && l2 > 0.01) {
         l1 = Math.round(1000 * l1).toString();
         l2 = Math.round(1000 * l2).toString();
+        l3 = Math.round(1000 * l3).toString();
+        l4 = Math.round(1000 * l4).toString();
         unit = "m";
       } else {
         l1 = (Math.round(10000000 * l1) / 100).toString();
         l2 = (Math.round(10000000 * l2) / 100).toString();
+        l3 = (Math.round(10000000 * l3) / 100).toString();
+        l4 = (Math.round(10000000 * l4) / 100).toString();
         unit = "cm";
       }
       geojson.features.push({
         type: "Feature",
-        properties: { x, y, z: zoom, l1, l2, unit },
+        properties: {
+          x,
+          y,
+          z: zoom,
+          l1,
+          l2,
+          l3,
+          l4,
+          unit,
+          km_l1,
+          km_l2,
+          km_l3,
+          km_l4,
+        },
         geometry,
       });
     }
@@ -80,15 +105,18 @@ const refresh = () => {
         ["get", "x"],
         " / ",
         ["get", "y"],
-        " (",
-        ["get", "l1"],
-        " ",
-        ["get", "unit"],
-        " x ",
+        "\ntop: ",
         ["get", "l2"],
         " ",
         ["get", "unit"],
-        ")",
+        "\nbottom: ",
+        ["get", "l4"],
+        " ",
+        ["get", "unit"],
+        "\nside: ",
+        ["get", "l1"],
+        " ",
+        ["get", "unit"],
       ],
       "text-size": 10,
       "text-font": ["Noto Sans Regular"],
