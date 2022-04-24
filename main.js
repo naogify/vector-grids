@@ -74,55 +74,53 @@ const refresh = () => {
       });
     }
   }
-  try {
-    map.removeLayer("grids-line");
-    map.removeLayer("grids-symbol");
-    map.removeSource("grids");
-  } catch (error) {
-    // nothing
-  }
-  map.addSource("grids", {
-    type: "geojson",
-    data: geojson,
-  });
-  map.addLayer({
-    id: "grids-line",
-    source: "grids",
-    type: "line",
-    paint: {
-      "line-width": 1,
-    },
-  });
-  map.addLayer({
-    id: "grids-symbol",
-    source: "grids",
-    type: "symbol",
-    layout: {
-      "text-field": [
-        "concat",
-        ["get", "z"],
-        " / ",
-        ["get", "x"],
-        " / ",
-        ["get", "y"],
-        "\ntop: ",
-        ["get", "l2"],
-        " ",
-        ["get", "unit"],
-        "\nbottom: ",
-        ["get", "l4"],
-        " ",
-        ["get", "unit"],
-        "\nside: ",
-        ["get", "l1"],
-        " ",
-        ["get", "unit"],
-      ],
-      "text-size": 10,
-      "text-font": ["Noto Sans Regular"],
-    },
-  });
 
+  const src = map.getSource("grids");
+  if (typeof src !== 'undefined') {
+    src.setData(geojson);
+  } else {
+    map.addSource("grids", {
+      type: "geojson",
+      data: geojson,
+    });
+    map.addLayer({
+      id: "grids-line",
+      source: "grids",
+      type: "line",
+      paint: {
+        "line-width": 1,
+      },
+    });
+    map.addLayer({
+      id: "grids-symbol",
+      source: "grids",
+      type: "symbol",
+      layout: {
+        "text-field": [
+          "concat",
+          ["get", "z"],
+          " / ",
+          ["get", "x"],
+          " / ",
+          ["get", "y"],
+          "\ntop: ",
+          ["get", "l2"],
+          " ",
+          ["get", "unit"],
+          "\nbottom: ",
+          ["get", "l4"],
+          " ",
+          ["get", "unit"],
+          "\nside: ",
+          ["get", "l1"],
+          " ",
+          ["get", "unit"],
+        ],
+        "text-size": 10,
+        "text-font": ["Noto Sans Regular"],
+      },
+    });
+  }
   return zoom;
 };
 
