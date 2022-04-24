@@ -129,10 +129,7 @@ const refresh = () => {
 map.on("load", () => {
   let prevZoom = refresh();
 
-  map.on("zoom", (e) => {
-    const zoom = Math.floor(map.getZoom()) + 2;
-    if (zoom !== prevZoom) {
-      prevZoom = refresh();
-    }
+  map.on("moveend", () => {
+    prevZoom = refresh();
   });
 });
