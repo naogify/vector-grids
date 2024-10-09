@@ -14,10 +14,22 @@
         margin: 0;
         padding: 0;
       }
+      h1 {
+        font-size: 18px;
+        padding: 10px 20px;
+        color: #454242;
+        position: absolute;
+        top: 0;
+        z-index: 2;
+        width: 100%;
+        background: #ffffff;
+        margin: 0;
+      }
     </style>
   </head>
   <body>
-    <div id="map" data-hash="on" data-max-zoom="30"></div>
+    <h1>空間IDを使用して一部のデータ（11/0/1819/820）を取得するデモ</h1>
+    <div id="map" data-hash="on" data-max-zoom="30" data-style="geolonia/notebook"></div>
     <script src="https://cdn.geolonia.com/dev/embed?geolonia-api-key=YOUR-API-KEY"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
     <script src="./vendor/tilebelt.js"></script>

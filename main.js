@@ -1,4 +1,9 @@
-const map = new window.geolonia.Map("#map");
+const map = new window.geolonia.Map({
+  container: "map",
+  style: "geolonia/notebook",
+  center: [139.602, 33.807],
+  zoom: 6.21
+});
 
 const refresh = () => {
   const zoom = Math.floor(map.getZoom()) + 2;
@@ -88,7 +93,9 @@ const refresh = () => {
       source: "grids",
       type: "line",
       paint: {
-        "line-width": 1,
+        "line-width": 0.5,
+        "line-color": "#ff0000",
+        "line-opacity": 0.3,
       },
     });
     map.addLayer({
@@ -103,18 +110,18 @@ const refresh = () => {
           ["get", "x"],
           " / ",
           ["get", "y"],
-          "\ntop: ",
-          ["get", "l2"],
-          " ",
-          ["get", "unit"],
-          "\nbottom: ",
-          ["get", "l4"],
-          " ",
-          ["get", "unit"],
-          "\nside: ",
-          ["get", "l1"],
-          " ",
-          ["get", "unit"],
+          // "\ntop: ",
+          // ["get", "l2"],
+          // " ",
+          // ["get", "unit"],
+          // "\nbottom: ",
+          // ["get", "l4"],
+          // " ",
+          // ["get", "unit"],
+          // "\nside: ",
+          // ["get", "l1"],
+          // " ",
+          // ["get", "unit"],
         ],
         "text-size": 10,
         "text-font": ["Noto Sans Regular"],
@@ -125,6 +132,37 @@ const refresh = () => {
 };
 
 map.on("load", () => {
+
+  map.addSource('all-area', {
+    type: 'geojson',
+    data: 'all.geojson'
+  });
+
+  map.addSource('partial', {
+    type: 'geojson',
+    data: '11-1819-820.geojson'
+  });
+
+  map.addLayer({
+    id: 'all-area',
+    type: 'fill',
+    source: 'all-area',
+    paint: {
+      'fill-color': '#0000ff',
+      'fill-opacity': 0.1
+    }
+  });
+
+  map.addLayer({
+    id: 'partial',
+    type: 'fill',
+    source: 'partial',
+    paint: {
+      'fill-color': 'blue',
+      'fill-opacity': 0.5
+    }
+  });
+
   let prevZoom = refresh();
 
   map.on("moveend", () => {
