@@ -1,8 +1,8 @@
 const map = new window.geolonia.Map({
   container: "map",
   style: "geolonia/notebook",
-  center: [139.602, 33.807],
-  zoom: 6.21
+  center: [139.7817, 33.5843],
+  zoom: 9.35
 });
 
 const refresh = () => {
